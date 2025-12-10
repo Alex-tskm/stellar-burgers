@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from '../../services/store';
 import { orderSelectors } from '../../services/slices/orderSlice';
 import { ingredientsSelectors } from '../../services/slices/ingredientsSlice';
 import { fetchOrderByNumber } from '../../services/thunks/orderThunk';
-import { useEffect } from 'react'; 
+import { useEffect } from 'react';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams();

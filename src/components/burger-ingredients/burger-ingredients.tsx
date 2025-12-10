@@ -10,7 +10,7 @@ import { ingredientsSelectors } from '../../services/slices/ingredientsSlice';
 export const BurgerIngredients: FC = () => {
   const ingredients = useSelector(ingredientsSelectors.ingredientsSelect);
 
-  // Фильтруем ингредиенты по типам 
+  // Фильтруем ингредиенты по типам
   const buns = ingredients.filter((item) => item.type === 'bun');
   const mains = ingredients.filter((item) => item.type === 'main');
   const sauces = ingredients.filter((item) => item.type === 'sauce');

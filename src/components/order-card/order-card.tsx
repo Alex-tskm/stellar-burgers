@@ -7,7 +7,7 @@ import { OrderCardUI } from '../ui/order-card';
 import { useSelector } from '../../services/store';
 import { ingredientsSelectors } from '../../services/slices/ingredientsSlice';
 
-const maxIngredients = 6; 
+const maxIngredients = 6;
 
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const location = useLocation();
