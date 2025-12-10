@@ -38,3 +38,8 @@ export type TUser = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export type TConstructorFields = {
+  bun: TConstructorIngredient | null;
+  ingredients: TConstructorIngredient[];
+};
