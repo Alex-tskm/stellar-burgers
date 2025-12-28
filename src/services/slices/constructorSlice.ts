@@ -68,8 +68,19 @@ const constructorSlice = createSlice({
       action: PayloadAction<{ from: number; to: number }>
     ) => {
       const { from, to } = action.payload;
+      // Проверяем только from: должен быть в [0, length‑1]
+      if (from < 0 || from >= state.ingredients.length) {
+        return; // Некорректный from → не меняем состояние
+      }
+      // Удаляем элемент по from
       const [movedIngredient] = state.ingredients.splice(from, 1);
-      state.ingredients.splice(to, 0, movedIngredient);
+      // Определяем индекс вставки
+      let insertIndex = to;
+      if (to >= state.ingredients.length) {
+        insertIndex = state.ingredients.length; // в конец
+      }
+      // Вставляем элемент
+      state.ingredients.splice(insertIndex, 0, movedIngredient);
     },
 
     /**
@@ -110,3 +121,6 @@ export const constructorSelectors = {
 
 // Экспорт редуктора slice для подключения к store
 export default constructorSlice.reducer;
+
+// Дополнительно экспортируем сам slice — для тестов и мета-анализа
+export { constructorSlice };

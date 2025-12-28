@@ -112,3 +112,4 @@ export const userSelectors = {
 
 // Экспорт редуктора slice
 export default userSlice.reducer;
+export { userSlice };

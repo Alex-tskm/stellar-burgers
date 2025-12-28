@@ -89,3 +89,7 @@ export const feedsSelectors = {
 
 // Экспорт редуктора slice для подключения к store
 export default feedsSlice.reducer;
+
+// Экспорт типа состояния
+export type { FeedsState };
+export { feedsSlice }; // Экспорт полного объекта slice

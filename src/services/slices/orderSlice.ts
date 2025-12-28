@@ -122,3 +122,5 @@ export const orderSelectors = {
 
 // Экспорт редуктора slice для подключения к store
 export default orderSlice.reducer;
+
+export { orderSlice };
