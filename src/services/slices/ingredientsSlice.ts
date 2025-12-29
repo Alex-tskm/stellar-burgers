@@ -80,3 +80,7 @@ export const ingredientsSelectors = {
 
 // Экспорт редуктора slice для подключения к store
 export default ingredientsSlice.reducer;
+
+export { ingredientsSlice };
+export type { IngredientsState };
+export { initialState };
