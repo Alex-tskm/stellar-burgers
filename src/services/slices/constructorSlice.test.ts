@@ -1,7 +1,8 @@
 import {
   constructorSlice,
   constructorActions,
-  constructorSelectors
+  constructorSelectors,
+  initialState as initialStateBurger
 } from './constructorSlice';
 import {
   TConstructorIngredient,
@@ -53,16 +54,11 @@ const testIngredient2: TIngredient = {
   image_large: 'https://code.s3.yandex.net/react/meat/main-02-large.png'
 };
 
-const initialState: RootState['burgerConstructor'] = {
-  bun: null,
-  ingredients: []
-};
-
 describe('constructorSlice', () => {
   describe('addIngredient', () => {
     it('добавляет булку, заменяя существующую', () => {
       const state = constructorSlice.reducer(
-        initialState,
+        initialStateBurger,
         constructorActions.addIngredient({ ingredient: testBun })
       );
       expect(state.bun).not.toBeNull();
@@ -72,7 +68,7 @@ describe('constructorSlice', () => {
 
     it('добавляет ингредиент в массив ingredients', () => {
       const state = constructorSlice.reducer(
-        initialState,
+        initialStateBurger,
         constructorActions.addIngredient({ ingredient: testIngredient1 })
       );
       expect(state.ingredients.length).toBe(1);
@@ -82,7 +78,7 @@ describe('constructorSlice', () => {
 
     it('при добавлении булки заменяет предыдущую', () => {
       let state = constructorSlice.reducer(
-        initialState,
+        initialStateBurger,
         constructorActions.addIngredient({ ingredient: testBun })
       );
       state = constructorSlice.reducer(
@@ -96,7 +92,7 @@ describe('constructorSlice', () => {
 
     it('генерирует уникальный id для ингредиента', () => {
       const state = constructorSlice.reducer(
-        initialState,
+        initialStateBurger,
         constructorActions.addIngredient({ ingredient: testIngredient1 })
       );
       expect(state.ingredients[0].id).toMatch(
@@ -108,7 +104,7 @@ describe('constructorSlice', () => {
   describe('removeIngredient', () => {
     it('удаляет ингредиент по id', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -124,7 +120,7 @@ describe('constructorSlice', () => {
 
     it('не изменяет состояние, если id не найден', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' }
         ] as TConstructorIngredient[]
@@ -138,7 +134,7 @@ describe('constructorSlice', () => {
 
     it('очищает массив, если удалить все ингредиенты', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -159,7 +155,7 @@ describe('constructorSlice', () => {
   describe('moveIngredient', () => {
     it('перемещает ингредиент с from на to', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -175,7 +171,7 @@ describe('constructorSlice', () => {
 
     it('не изменяет массив, если from === to', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -190,7 +186,7 @@ describe('constructorSlice', () => {
 
     it('корректно обрабатывает перемещение в начало массива', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' },
@@ -208,7 +204,7 @@ describe('constructorSlice', () => {
 
     it('корректно обрабатывает перемещение в конец массива', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -224,7 +220,7 @@ describe('constructorSlice', () => {
 
     it('обрабатывает перемещение с отрицательным from (должно игнорировать)', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -240,7 +236,7 @@ describe('constructorSlice', () => {
 
     it('обрабатывает перемещение с from больше длины массива (должно игнорировать)', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -255,7 +251,7 @@ describe('constructorSlice', () => {
 
     it('обрабатывает перемещение с отрицательным to (должно игнорировать)', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -270,7 +266,7 @@ describe('constructorSlice', () => {
 
     it('обрабатывает перемещение с to больше длины массива (должно добавлять в конец)', () => {
       const stateWithIngredients = {
-        ...initialState,
+        ...initialStateBurger,
         ingredients: [
           { ...testIngredient1, id: 'i1' },
           { ...testIngredient2, id: 'i2' }
@@ -320,7 +316,7 @@ describe('constructorSlice', () => {
 
     it('работает с пустым состоянием (не вызывает ошибок)', () => {
       const state = constructorSlice.reducer(
-        initialState,
+        initialStateBurger,
         constructorActions.clearConstructor()
       );
       expect(state.bun).toBeNull();
@@ -371,12 +367,12 @@ describe('constructorSlice', () => {
 
     it('селекторы корректно работают с пустым состоянием', () => {
       const emptyState: Partial<RootState> = {
-        burgerConstructor: initialState
+        burgerConstructor: initialStateBurger
       };
 
       expect(
         constructorSelectors.constructorBurgerElement(emptyState as RootState)
-      ).toEqual(initialState);
+      ).toEqual(initialStateBurger);
       expect(
         constructorSelectors.constructorBurgerIsBun(emptyState as RootState)
       ).toBeNull();

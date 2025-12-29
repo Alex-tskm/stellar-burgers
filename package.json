@@ -44,7 +44,6 @@
     "@storybook/test": "^7.6.10",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
-    "@types/cypress": "^0.1.6",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
@@ -95,7 +94,7 @@
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier ./src --write",
     "cypress:open": "cypress open",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "eslintConfig": {
     "extends": [

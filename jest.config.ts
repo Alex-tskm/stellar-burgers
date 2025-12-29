@@ -93,16 +93,11 @@ const config: JestConfigWithTsJest = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '^@pages(.*)$': '<rootDir>/src/pages$1',
-    '^@components(.*)$': '<rootDir>/src/components$1',
-    '^@ui(.*)$': '<rootDir>/src/components/ui$1',
-    '^@ui-pages(.*)$': '<rootDir>/src/components/ui/pages$1',
-    '^@utils-types(.*)$': '<rootDir>/src/utils/types$1',
-    '^@api$': '<rootDir>/src/utils/burger-api.ts',
-    '^@slices(.*)$': '<rootDir>/src/services/slices$1',
-    '^@selectors(.*)$': '<rootDir>/src/services/selectors$1',
-    '^@thunks(.*)$': '<rootDir>/src/services/thunks$1',
-    '^@store(.*)$': '<rootDir>/src/services/store$1'
+    '^@api$': '<rootDir>/src/utils/burger-api',
+    '^@utils-types$': '<rootDir>/src/utils/types',
+    '^@components/(.*)$': '<rootDir>/src/components/$1',
+    '^@ui/(.*)$': '<rootDir>/src/components/ui/$1',
+    '^@pages/(.*)$': '<rootDir>/src/pages/$1'
   },
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -114,7 +109,7 @@ const config: JestConfigWithTsJest = {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  // preset: undefined,
+  preset: 'ts-jest',
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -167,15 +162,15 @@ const config: JestConfigWithTsJest = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  // testMatch: [
-  //   "**/__tests__/**/*.?([mc])[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"
-  // ],
+  testMatch: [
+  //  "**/__tests__/**/*.?([mc])[jt]s?(x)",
+    "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"
+  ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  testPathIgnorePatterns: [
+    "\\\\node_modules\\\\"
+  ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],

@@ -1,7 +1,16 @@
-import { orderSlice, orderActions, orderSelectors } from './orderSlice';
+import {
+  orderSlice,
+  orderActions,
+  orderSelectors,
+  initialState as initialStateOrder
+} from './orderSlice';
 import { createOrder, fetchOrderByNumber } from '../thunks/orderThunk';
 import { TOrder } from '../../utils/types';
 import { RootState } from '../store';
+import { initialState as initialStateIngredients } from './ingredientsSlice';
+import { initialState as initialStateBurger } from './constructorSlice';
+import { initialState as initialStateUser } from './userSlice';
+import { initialState as initialStateFeeds } from './feedsSlice';
 
 // Mock данных для тестов
 const mockOrder: TOrder = {
@@ -21,7 +30,11 @@ const mockState: RootState = {
     currentOrder: mockOrder,
     currentOrderLoading: false,
     requestStatus: 'succeeded'
-  }
+  },
+  ingredients: initialStateIngredients,
+  burgerConstructor: initialStateBurger,
+  user: initialStateUser,
+  feeds: initialStateFeeds
 };
 
 describe('orderSlice', () => {
@@ -100,7 +113,7 @@ describe('orderSlice', () => {
 
       const state = orderSlice.reducer(
         initialState,
-        createOrder.rejected('request-id', null, ['1', '2'])
+        createOrder.rejected('request-id' as any, null as any, ['1', '2'])
       );
 
       expect(state.requestStatus).toBe('failed');
@@ -138,7 +151,7 @@ describe('orderSlice', () => {
 
       const state = orderSlice.reducer(
         initialState,
-        fetchOrderByNumber.rejected('request-id', null, 12345)
+        fetchOrderByNumber.rejected('request-id' as any, null as any, 12345)
       );
 
       expect(state.currentOrderLoading).toBe(false);
@@ -173,7 +186,11 @@ describe('orderSlice', () => {
         order: {
           ...mockState.order,
           requestStatus: 'loading'
-        }
+        },
+        ingredients: initialStateIngredients,
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        feeds: initialStateFeeds
       };
 
       const result = orderSelectors.orderIsLoadingSelect(loadingState);
@@ -185,19 +202,31 @@ describe('orderSlice', () => {
         order: {
           ...mockState.order,
           requestStatus: 'idle'
-        }
+        },
+        ingredients: initialStateIngredients,
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        feeds: initialStateFeeds
       };
       const succeededState: RootState = {
         order: {
           ...mockState.order,
           requestStatus: 'succeeded'
-        }
+        },
+        ingredients: initialStateIngredients,
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        feeds: initialStateFeeds
       };
       const failedState: RootState = {
         order: {
           ...mockState.order,
           requestStatus: 'failed'
-        }
+        },
+        ingredients: initialStateIngredients,
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        feeds: initialStateFeeds
       };
 
       expect(orderSelectors.orderIsLoadingSelect(idleState)).toBe(false);

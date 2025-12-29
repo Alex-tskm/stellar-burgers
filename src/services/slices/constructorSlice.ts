@@ -124,3 +124,5 @@ export default constructorSlice.reducer;
 
 // Дополнительно экспортируем сам slice — для тестов и мета-анализа
 export { constructorSlice };
+
+export { initialState };

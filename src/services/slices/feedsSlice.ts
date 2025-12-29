@@ -93,3 +93,4 @@ export default feedsSlice.reducer;
 // Экспорт типа состояния
 export type { FeedsState };
 export { feedsSlice }; // Экспорт полного объекта slice
+export { initialState };

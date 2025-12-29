@@ -124,3 +124,5 @@ export const orderSelectors = {
 export default orderSlice.reducer;
 
 export { orderSlice };
+
+export { initialState };

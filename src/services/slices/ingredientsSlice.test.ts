@@ -2,8 +2,13 @@ import {
   ingredientsSlice,
   ingredientsActions,
   ingredientsSelectors,
-  IngredientsState
+  IngredientsState,
+  initialState as initialStateIngredients
 } from './ingredientsSlice';
+import { initialState as initialStateBurger } from './constructorSlice';
+import { initialState as initialStateUser } from './userSlice';
+import { initialState as initialStateOrder } from './orderSlice';
+import { initialState as initialStateFeeds } from './feedsSlice';
 import { fetchIngredients } from '../thunks/ingredientsThunk';
 import { TIngredient } from '../../utils/types';
 import { RootState } from '../store';
@@ -100,13 +105,8 @@ describe('ingredientsSlice', () => {
     });
 
     it('fulfilled должен сохранить ингредиенты и установить requestStatus = "succeeded"', () => {
-      const initialState: IngredientsState = {
-        ingredients: [],
-        requestStatus: 'loading'
-      };
-
       const state = ingredientsSlice.reducer(
-        initialState,
+        initialStateIngredients,
         fetchIngredients.fulfilled(mockIngredients, 'request-id', undefined)
       );
 
@@ -121,8 +121,8 @@ describe('ingredientsSlice', () => {
       };
 
       const action = fetchIngredients.rejected(
-        'request-id',
-        null
+        'request-id' as any,
+        null as any
       ) as FetchIngredientsRejected;
 
       const state = ingredientsSlice.reducer(initialState, action);
@@ -142,12 +142,11 @@ describe('ingredientsSlice', () => {
 
       const state = ingredientsSlice.reducer(
         initialState,
-        fetchIngredients.rejected('request-id', error, undefined)
+        fetchIngredients.rejected('request-id' as any, error as any, undefined)
       );
 
       expect(state.requestStatus).toBe('failed');
       expect(state.ingredients).toEqual(mockIngredients);
-      // Можно дополнительно проверить наличие error в state, если нужно
     });
   });
 
@@ -156,7 +155,11 @@ describe('ingredientsSlice', () => {
       ingredients: {
         ingredients: mockIngredients,
         requestStatus: 'succeeded'
-      }
+      },
+      burgerConstructor: initialStateBurger,
+      user: initialStateUser,
+      order: initialStateOrder,
+      feeds: initialStateFeeds
     };
 
     it('ingredientsSelect должен вернуть массив ингредиентов', () => {
@@ -169,7 +172,11 @@ describe('ingredientsSlice', () => {
         ingredients: {
           ingredients: [],
           requestStatus: 'loading'
-        }
+        },
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        order: initialStateOrder,
+        feeds: initialStateFeeds
       };
 
       const result =
@@ -182,19 +189,31 @@ describe('ingredientsSlice', () => {
         ingredients: {
           ingredients: [],
           requestStatus: 'idle'
-        }
+        },
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        order: initialStateOrder,
+        feeds: initialStateFeeds
       };
       const succeededState: RootState = {
         ingredients: {
           ingredients: [],
           requestStatus: 'succeeded'
-        }
+        },
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        order: initialStateOrder,
+        feeds: initialStateFeeds
       };
       const failedState: RootState = {
         ingredients: {
           ingredients: [],
           requestStatus: 'failed'
-        }
+        },
+        burgerConstructor: initialStateBurger,
+        user: initialStateUser,
+        order: initialStateOrder,
+        feeds: initialStateFeeds
       };
 
       expect(ingredientsSelectors.ingredientsIsLoadingSelect(idleState)).toBe(

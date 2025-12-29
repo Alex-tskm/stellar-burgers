@@ -1,6 +1,11 @@
 import { TOrder, TOrdersData } from '@utils-types';
 import { fetchFeed, fetchProfileOrders } from '../thunks/feedsThunk';
-import { feedsSlice, feedsActions, FeedsState } from './feedsSlice';
+import {
+  feedsSlice,
+  feedsActions,
+  FeedsState,
+  initialState as initialStateFeeds
+} from './feedsSlice';
 
 // Копируем определение из API (без экспорта)
 type TServerResponse<T> = { success: boolean } & T;
@@ -11,13 +16,6 @@ type TFeedsResponse = TServerResponse<{
 }>;
 
 describe('feedsSlice', () => {
-  // Начальное состояние — ТОЛЬКО поля из реального FeedsState
-  const initialState: FeedsState = {
-    feed: null,
-    ordersAuth: [],
-    requestStatus: 'idle' // единственное допустимое поле!
-  };
-
   // Mock-данные для тестов
   const testOrder: TOrder = {
     _id: '1',
@@ -41,7 +39,7 @@ describe('feedsSlice', () => {
   // Тесты для fetchFeed
   it('requestStatus = "loading" при fetchFeed.pending', () => {
     const state = feedsSlice.reducer(
-      initialState,
+      initialStateFeeds,
       fetchFeed.pending('', undefined)
     );
     expect(state.requestStatus).toBe('loading');
@@ -49,7 +47,7 @@ describe('feedsSlice', () => {
 
   it('feed обновляется и requestStatus = "succeeded" при fetchFeed.fulfilled', () => {
     const state = feedsSlice.reducer(
-      initialState,
+      initialStateFeeds,
       fetchFeed.fulfilled(feedData, '', undefined) // <-- Только feedData
     );
     expect(state.feed).toEqual(feedData);
@@ -60,7 +58,7 @@ describe('feedsSlice', () => {
     const testError = new Error('Ошибка загрузки ленты');
 
     const state = feedsSlice.reducer(
-      initialState,
+      initialStateFeeds,
       fetchFeed.rejected(testError, '', undefined)
     );
 
@@ -70,7 +68,7 @@ describe('feedsSlice', () => {
   // Тесты для fetchProfileOrders
   it('ordersAuth обновляется при fetchProfileOrders.fulfilled', () => {
     const state = feedsSlice.reducer(
-      initialState,
+      initialStateFeeds,
       fetchProfileOrders.fulfilled(ordersAuthData, '', undefined)
     );
 
@@ -79,13 +77,16 @@ describe('feedsSlice', () => {
 
   // Дополнительные тесты для редьюсеров
   it('clearFeed устанавливает feed в null', () => {
-    const stateWithFeed = { ...initialState, feed: feedData };
+    const stateWithFeed = { ...initialStateFeeds, feed: feedData };
     const state = feedsSlice.reducer(stateWithFeed, feedsActions.clearFeed());
     expect(state.feed).toBeNull();
   });
 
   it('clearProfileOrders очищает ordersAuth', () => {
-    const stateWithOrders = { ...initialState, ordersAuth: ordersAuthData };
+    const stateWithOrders = {
+      ...initialStateFeeds,
+      ordersAuth: ordersAuthData
+    };
     const state = feedsSlice.reducer(
       stateWithOrders,
       feedsActions.clearProfileOrders()

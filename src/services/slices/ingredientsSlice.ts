@@ -83,3 +83,4 @@ export default ingredientsSlice.reducer;
 
 export { ingredientsSlice };
 export type { IngredientsState };
+export { initialState };

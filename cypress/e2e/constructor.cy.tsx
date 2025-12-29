@@ -1,14 +1,14 @@
 /// <reference types="cypress" />
 describe('Проверяем доступность приложения', function () {
   it('сервис должен быть доступен по адресу localhost:4000', function () {
-    cy.visit('localhost:4000');
+    cy.visit('/');
   });
 });
 
 describe('Конструктор бургера — интеграционные тесты', () => {
   beforeEach(() => {
     cy.viewport(1900, 1200);
-    cy.visit('localhost:4000');
+    cy.visit('/');
 
     // Перехватываем запросы
     cy.intercept('GET', '**/api/ingredients**', {
@@ -137,13 +137,13 @@ describe('Конструктор бургера — интеграционные
       cy.contains('Оформить заказ').click();
 
       // Перехватываем и ждём ответ API
-      cy.wait('@createOrder', { timeout: 10000 }).then((interception) => {
+      cy.wait('@createOrder', { timeout: 10000 }).then((interception) => {  
         // Проверяем статус ответа
-        expect(interception.response.statusCode).to.equal(200);
+        expect(interception.response?.statusCode).to.equal(200);
         // Проверяем, что ответ содержит success: true
-        expect(interception.response.body.success).to.be.true;
+        expect(interception.response?.body.success).to.be.true;
         // Проверяем соответствие номера заказа
-        expect(interception.response.body.order.number).to.equal(expectedOrderNumber);
+        expect(interception.response?.body?.order?.number).to.equal(expectedOrderNumber);
       });
 
       cy.wait(1000); // небольшая задержка для рендера
