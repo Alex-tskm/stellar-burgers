@@ -32,14 +32,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/14</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">37.5% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>3/8</span>
             </div>
         
             
@@ -241,35 +241,35 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -409,27 +409,27 @@ export const orderSelectors = {
    * Возвращает данные последнего созданного заказа
    * @returns TOrder | null
    */
-  newOrderSelect: (state: { order: OrderState }) =&gt; state.order.newOrder,
+  newOrderSelect: <span class="fstat-no" title="function not covered" >(state: { order: OrderState }) =&gt; state.</span>order.newOrder,
 &nbsp;
   /**
    * Проверяет, идёт ли отправка запроса на создание заказа
    * @returns boolean
    */
-  newOrderRequestSelect: (state: { order: OrderState }) =&gt;
+  newOrderRequestSelect: <span class="fstat-no" title="function not covered" >(state: { order: OrderState }) =&gt;</span>
     state.order.newOrderRequest,
 &nbsp;
   /**
    * Возвращает текущий просматриваемый заказ
    * @returns TOrder | null
    */
-  currentOrderSelect: (state: { order: OrderState }) =&gt;
+  currentOrderSelect: <span class="fstat-no" title="function not covered" >(state: { order: OrderState }) =&gt;</span>
     state.order.currentOrder,
 &nbsp;
   /**
    * Проверяет, загружается ли текущий заказ
    * @returns boolean
    */
-  currentOrderLoadingSelect: (state: { order: OrderState }) =&gt;
+  currentOrderLoadingSelect: <span class="fstat-no" title="function not covered" >(state: { order: OrderState }) =&gt;</span>
     state.order.currentOrderLoading,
 &nbsp;
   /**
@@ -437,7 +437,7 @@ export const orderSelectors = {
    * (относится к операциям createOrder)
    * @returns boolean
    */
-  orderIsLoadingSelect: (state: { order: OrderState }) =&gt;
+  orderIsLoadingSelect: <span class="fstat-no" title="function not covered" >(state: { order: OrderState }) =&gt;</span>
     state.order.requestStatus === 'loading'
 };
 &nbsp;
@@ -454,7 +454,7 @@ export { initialState };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-29T06:38:56.387Z
+                at 2025-12-29T07:50:58.708Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

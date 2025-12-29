@@ -5,6 +5,11 @@ import { orderSlice } from './slices/orderSlice';
 import { userSlice } from './slices/userSlice';
 import { feedsSlice } from './slices/feedsSlice';
 import { combineReducers } from '@reduxjs/toolkit';
+import { initialState as initialStateIngredients } from './slices/ingredientsSlice';
+import { initialState as initialStateBurger } from './slices/constructorSlice';
+import { initialState as initialStateUser } from './slices/userSlice';
+import { initialState as initialStateFeeds } from './slices/feedsSlice';
+import { initialState as initialStateOrder } from './slices/orderSlice';
 
 describe('root store', () => {
   const rootReducer = combineReducers({
@@ -19,39 +24,19 @@ describe('root store', () => {
     const state = rootReducer(undefined, { type: 'UNKNOWN_ACTION' });
 
     // ingredients
-    expect(state.ingredients).toEqual({
-      ingredients: [],
-      requestStatus: 'idle'
-    });
+    expect(state.ingredients).toEqual(initialStateIngredients);
 
     // burgerConstructor
-    expect(state.burgerConstructor).toEqual({
-      bun: null,
-      ingredients: []
-    });
+    expect(state.burgerConstructor).toEqual(initialStateBurger);
 
     // order
-    expect(state.order).toEqual({
-      newOrder: null,
-      newOrderRequest: false,
-      currentOrder: null,
-      currentOrderLoading: false,
-      requestStatus: 'idle'
-    });
+    expect(state.order).toEqual(initialStateOrder);
 
     // user
-    expect(state.user).toEqual({
-      user: null,
-      userCheck: false,
-      requestStatus: 'idle'
-    });
+    expect(state.user).toEqual(initialStateUser);
 
     // feeds
-    expect(state.feeds).toEqual({
-      feed: null,
-      ordersAuth: [],
-      requestStatus: 'idle'
-    });
+    expect(state.feeds).toEqual(initialStateFeeds);
   });
 
   it('store.getState() совпадает с initialState', () => {

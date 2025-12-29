@@ -12,7 +12,6 @@ import { initialState as initialStateFeeds } from './feedsSlice';
 import { fetchIngredients } from '../thunks/ingredientsThunk';
 import { TIngredient } from '../../utils/types';
 import { RootState } from '../store';
-
 import { PayloadAction } from '@reduxjs/toolkit';
 
 // Тип для rejected action
@@ -59,6 +58,16 @@ const mockIngredients: TIngredient[] = [
   }
 ];
 
+// === Вынесенные селекторы (константы) ===
+const selectIngredientsState = (state: RootState) => state.ingredients;
+const selectIngredientsList = (state: RootState): TIngredient[] =>
+  selectIngredientsState(state).ingredients;
+const selectRequestStatus = (state: RootState): string =>
+  selectIngredientsState(state).requestStatus;
+const makeSelectIngredientById = (id: string) => (state: RootState): TIngredient | undefined =>
+  selectIngredientsList(state).find(ing => ing._id === id);
+
+// === Тесты ===
 describe('ingredientsSlice', () => {
   describe('начальное состояние', () => {
     it('должно иметь корректное начальное состояние', () => {
@@ -83,8 +92,8 @@ describe('ingredientsSlice', () => {
         ingredientsActions.clearIngredients()
       );
 
-      expect(state.ingredients).toEqual([]);
-      expect(state.requestStatus).toBe('succeeded');
+      expect(selectIngredientsList({ ingredients: state } as RootState)).toEqual([]);
+      expect(selectRequestStatus({ ingredients: state } as RootState)).toBe('succeeded');
     });
   });
 
@@ -100,8 +109,8 @@ describe('ingredientsSlice', () => {
         fetchIngredients.pending('request-id', undefined)
       );
 
-      expect(state.requestStatus).toBe('loading');
-      expect(state.ingredients).toEqual(mockIngredients);
+      expect(selectRequestStatus({ ingredients: state } as RootState)).toBe('loading');
+      expect(selectIngredientsList({ ingredients: state } as RootState)).toEqual(mockIngredients);
     });
 
     it('fulfilled должен сохранить ингредиенты и установить requestStatus = "succeeded"', () => {
@@ -110,8 +119,8 @@ describe('ingredientsSlice', () => {
         fetchIngredients.fulfilled(mockIngredients, 'request-id', undefined)
       );
 
-      expect(state.requestStatus).toBe('succeeded');
-      expect(state.ingredients).toEqual(mockIngredients);
+      expect(selectRequestStatus({ ingredients: state } as RootState)).toBe('succeeded');
+      expect(selectIngredientsList({ ingredients: state } as RootState)).toEqual(mockIngredients);
     });
 
     it('rejected должен установить requestStatus = "failed"', () => {
@@ -127,8 +136,8 @@ describe('ingredientsSlice', () => {
 
       const state = ingredientsSlice.reducer(initialState, action);
 
-      expect(state.requestStatus).toBe('failed');
-      expect(state.ingredients).toEqual(mockIngredients);
+      expect(selectRequestStatus({ ingredients: state } as RootState)).toBe('failed');
+      expect(selectIngredientsList({ ingredients: state } as RootState)).toEqual(mockIngredients);
     });
 
     // Дополнительный тест: обработка ошибки с конкретным Error
@@ -145,8 +154,8 @@ describe('ingredientsSlice', () => {
         fetchIngredients.rejected('request-id' as any, error as any, undefined)
       );
 
-      expect(state.requestStatus).toBe('failed');
-      expect(state.ingredients).toEqual(mockIngredients);
+      expect(selectRequestStatus({ ingredients: state } as RootState)).toBe('failed');
+      expect(selectIngredientsList({ ingredients: state } as RootState)).toEqual(mockIngredients);
     });
   });
 
@@ -163,7 +172,7 @@ describe('ingredientsSlice', () => {
     };
 
     it('ingredientsSelect должен вернуть массив ингредиентов', () => {
-      const result = ingredientsSelectors.ingredientsSelect(mockState);
+      const result = selectIngredientsList(mockState);
       expect(result).toEqual(mockIngredients);
     });
 
@@ -179,8 +188,7 @@ describe('ingredientsSlice', () => {
         feeds: initialStateFeeds
       };
 
-      const result =
-        ingredientsSelectors.ingredientsIsLoadingSelect(loadingState);
+      const result = selectRequestStatus(loadingState) === 'loading';
       expect(result).toBe(true);
     });
 
@@ -216,27 +224,18 @@ describe('ingredientsSlice', () => {
         feeds: initialStateFeeds
       };
 
-      expect(ingredientsSelectors.ingredientsIsLoadingSelect(idleState)).toBe(
-        false
-      );
-      expect(
-        ingredientsSelectors.ingredientsIsLoadingSelect(succeededState)
-      ).toBe(false);
-      expect(ingredientsSelectors.ingredientsIsLoadingSelect(failedState)).toBe(
-        false
-      );
+      expect(selectRequestStatus(idleState) === 'loading').toBe(false);
+      expect(selectRequestStatus(succeededState) === 'loading').toBe(false);
+      expect(selectRequestStatus(failedState) === 'loading').toBe(false);
     });
 
     it('ingredientByIdSelect должен найти ингредиент по _id', () => {
-      const result = ingredientsSelectors.ingredientByIdSelect(mockState, '1');
+      const result = makeSelectIngredientById('1')(mockState);
       expect(result).toEqual(mockIngredients[0]);
     });
 
     it('ingredientByIdSelect должен вернуть undefined для несуществующего id', () => {
-      const result = ingredientsSelectors.ingredientByIdSelect(
-        mockState,
-        '999'
-      );
+      const result = makeSelectIngredientById('999')(mockState);
       expect(result).toBeUndefined();
     });
   });

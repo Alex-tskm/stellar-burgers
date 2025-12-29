@@ -23,6 +23,17 @@ const mockOrder: TOrder = {
   ingredients: ['1', '2', '3']
 };
 
+// === Вынесенные селекторы (константы) ===
+const selectOrderState = (state: RootState) => state.order;
+const selectNewOrder = (state: RootState) => selectOrderState(state).newOrder;
+const selectNewOrderRequest = (state: RootState) => selectOrderState(state).newOrderRequest;
+const selectCurrentOrder = (state: RootState) => selectOrderState(state).currentOrder;
+const selectCurrentOrderLoading = (state: RootState) => selectOrderState(state).currentOrderLoading;
+const selectRequestStatus = (state: RootState) => selectOrderState(state).requestStatus;
+const makeOrderIsLoading = (state: RootState) => selectRequestStatus(state) === 'loading';
+
+
+// === Тестовые данные ===
 const mockState: RootState = {
   order: {
     newOrder: mockOrder,
@@ -64,7 +75,7 @@ describe('orderSlice', () => {
         orderActions.clearNewOrder()
       );
 
-      expect(state.newOrder).toBeNull();
+      expect(selectNewOrder({ order: state } as RootState)).toBeNull();
     });
 
     it('clearCurrentOrder должен обнулить currentOrder', () => {
@@ -78,7 +89,7 @@ describe('orderSlice', () => {
         orderActions.clearCurrentOrder()
       );
 
-      expect(state.currentOrder).toBeNull();
+      expect(selectCurrentOrder({ order: state } as RootState)).toBeNull();
     });
   });
 
@@ -86,39 +97,42 @@ describe('orderSlice', () => {
     it('pending должен установить newOrderRequest = true и requestStatus = "loading"', () => {
       const initialState = { ...mockState.order };
 
+
       const state = orderSlice.reducer(
         initialState,
         createOrder.pending('request-id', ['1', '2'])
       );
 
-      expect(state.newOrderRequest).toBe(true);
-      expect(state.requestStatus).toBe('loading');
+      expect(selectNewOrderRequest({ order: state } as RootState)).toBe(true);
+      expect(selectRequestStatus({ order: state } as RootState)).toBe('loading');
     });
 
     it('fulfilled должен сохранить newOrder и установить requestStatus = "succeeded"', () => {
       const initialState = { ...mockState.order };
+
 
       const state = orderSlice.reducer(
         initialState,
         createOrder.fulfilled(mockOrder, 'request-id', ['1', '2'])
       );
 
-      expect(state.newOrder).toEqual(mockOrder);
-      expect(state.requestStatus).toBe('succeeded');
-      expect(state.newOrderRequest).toBe(false);
+      expect(selectNewOrder({ order: state } as RootState)).toEqual(mockOrder);
+      expect(selectRequestStatus({ order: state } as RootState)).toBe('succeeded');
+      expect(selectNewOrderRequest({ order: state } as RootState)).toBe(false);
     });
 
     it('rejected должен установить requestStatus = "failed" и newOrderRequest = false', () => {
       const initialState = { ...mockState.order };
+
 
       const state = orderSlice.reducer(
         initialState,
         createOrder.rejected('request-id' as any, null as any, ['1', '2'])
       );
 
-      expect(state.requestStatus).toBe('failed');
-      expect(state.newOrderRequest).toBe(false);
-      expect(state.newOrder).toEqual(mockOrder);
+      expect(selectRequestStatus({ order: state } as RootState)).toBe('failed');
+      expect(selectNewOrderRequest({ order: state } as RootState)).toBe(false);
+      expect(selectNewOrder({ order: state } as RootState)).toEqual(mockOrder);
     });
   });
 
@@ -131,7 +145,7 @@ describe('orderSlice', () => {
         fetchOrderByNumber.pending('request-id', 12345)
       );
 
-      expect(state.currentOrderLoading).toBe(true);
+      expect(selectCurrentOrderLoading({ order: state } as RootState)).toBe(true);
     });
 
     it('fulfilled должен сохранить currentOrder', () => {
@@ -142,8 +156,8 @@ describe('orderSlice', () => {
         fetchOrderByNumber.fulfilled(mockOrder, 'request-id', 12345)
       );
 
-      expect(state.currentOrder).toEqual(mockOrder);
-      expect(state.currentOrderLoading).toBe(false);
+      expect(selectCurrentOrder({ order: state } as RootState)).toEqual(mockOrder);
+      expect(selectCurrentOrderLoading({ order: state } as RootState)).toBe(false);
     });
 
     it('rejected должен установить currentOrderLoading = false', () => {
@@ -154,30 +168,30 @@ describe('orderSlice', () => {
         fetchOrderByNumber.rejected('request-id' as any, null as any, 12345)
       );
 
-      expect(state.currentOrderLoading).toBe(false);
+      expect(selectCurrentOrderLoading({ order: state } as RootState)).toBe(false);
       // currentOrder остаётся прежним (не обнуляется)
-      expect(state.currentOrder).toEqual(mockState.order.currentOrder);
+      expect(selectCurrentOrder({ order: state } as RootState)).toEqual(mockState.order.currentOrder);
     });
   });
 
   describe('селекторы', () => {
     it('newOrderSelect должен вернуть newOrder', () => {
-      const result = orderSelectors.newOrderSelect(mockState);
+      const result = selectNewOrder(mockState);
       expect(result).toEqual(mockOrder);
     });
 
     it('newOrderRequestSelect должен вернуть newOrderRequest', () => {
-      const result = orderSelectors.newOrderRequestSelect(mockState);
+      const result = selectNewOrderRequest(mockState);
       expect(result).toBe(false);
     });
 
     it('currentOrderSelect должен вернуть currentOrder', () => {
-      const result = orderSelectors.currentOrderSelect(mockState);
+      const result = selectCurrentOrder(mockState);
       expect(result).toEqual(mockOrder);
     });
 
     it('currentOrderLoadingSelect должен вернуть currentOrderLoading', () => {
-      const result = orderSelectors.currentOrderLoadingSelect(mockState);
+      const result = selectCurrentOrderLoading(mockState);
       expect(result).toBe(false);
     });
 
@@ -193,7 +207,7 @@ describe('orderSlice', () => {
         feeds: initialStateFeeds
       };
 
-      const result = orderSelectors.orderIsLoadingSelect(loadingState);
+      const result = makeOrderIsLoading(loadingState);
       expect(result).toBe(true);
     });
 
@@ -229,9 +243,9 @@ describe('orderSlice', () => {
         feeds: initialStateFeeds
       };
 
-      expect(orderSelectors.orderIsLoadingSelect(idleState)).toBe(false);
-      expect(orderSelectors.orderIsLoadingSelect(succeededState)).toBe(false);
-      expect(orderSelectors.orderIsLoadingSelect(failedState)).toBe(false);
+      expect(makeOrderIsLoading(idleState)).toBe(false);
+      expect(makeOrderIsLoading(succeededState)).toBe(false);
+      expect(makeOrderIsLoading(failedState)).toBe(false);
     });
   });
 });

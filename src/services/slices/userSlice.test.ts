@@ -62,6 +62,13 @@ const mockState: RootState = {
   feeds: initialStateFeeds
 };
 
+// === Вынесенные селекторы (константы) ===
+const selectUserState = (state: RootState) => state.user;
+const selectUser = (state: RootState) => selectUserState(state).user;
+const selectIsAuthChecked = (state: RootState) => selectUserState(state).userCheck;
+const selectRequestStatus = (state: RootState) => selectUserState(state).requestStatus;
+const makeUserIsLoading = (state: RootState) => selectRequestStatus(state) === 'loading';
+
 describe('userSlice', () => {
   describe('начальное состояние', () => {
     it('должно иметь корректное начальное состояние', () => {
@@ -84,16 +91,18 @@ describe('userSlice', () => {
         userActions.setUserCheck(true)
       );
 
-      expect(state.userCheck).toBe(true);
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
     });
 
     it('userLogout должен обнулить user и установить userCheck = true', () => {
       const initialState = { ...mockState.user };
 
+
       const state = userSlice.reducer(initialState, userActions.userLogout());
 
-      expect(state.user).toBeNull();
-      expect(state.userCheck).toBe(true);
+
+      expect(selectUser({ user: state } as RootState)).toBeNull();
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
     });
   });
 
@@ -101,16 +110,18 @@ describe('userSlice', () => {
     it('pending должен установить requestStatus = "loading"', () => {
       const initialState = { ...mockState.user };
 
+
       const state = userSlice.reducer(
         initialState,
         fetchUser.pending('request-id', undefined)
       );
 
-      expect(state.requestStatus).toBe('loading');
+      expect(selectRequestStatus({ user: state } as RootState)).toBe('loading');
     });
 
     it('fulfilled должен сохранить user и установить userCheck = true, requestStatus = "succeeded"', () => {
       const initialState = { ...mockState.user };
+
 
       const actionPayload = { user: mockUser };
 
@@ -119,9 +130,9 @@ describe('userSlice', () => {
         fetchUser.fulfilled(actionPayload as any, 'request-id', undefined)
       );
 
-      expect(state.user).toEqual(mockUser);
-      expect(state.userCheck).toBe(true);
-      expect(state.requestStatus).toBe('succeeded');
+      expect(selectUser({ user: state } as RootState)).toEqual(mockUser);
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
+      expect(selectRequestStatus({ user: state } as RootState)).toBe('succeeded');
     });
 
     it('rejected должен установить requestStatus = "failed" и userCheck = true', () => {
@@ -132,10 +143,10 @@ describe('userSlice', () => {
         fetchUser.rejected('request-id' as any, null as any, undefined)
       );
 
-      expect(state.requestStatus).toBe('failed');
-      expect(state.userCheck).toBe(true);
+      expect(selectRequestStatus({ user: state } as RootState)).toBe('failed');
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
       // user остаётся прежним (не обнуляется)
-      expect(state.user).toEqual(mockState.user.user);
+      expect(selectUser({ user: state } as RootState)).toEqual(mockState.user.user);
     });
   });
 
@@ -153,8 +164,8 @@ describe('userSlice', () => {
         })
       );
 
-      expect(state.user).toEqual(mockUser);
-      expect(state.userCheck).toBe(true);
+      expect(selectUser({ user: state } as RootState)).toEqual(mockUser);
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
     });
   });
 
@@ -173,8 +184,8 @@ describe('userSlice', () => {
         })
       );
 
-      expect(state.user).toEqual(mockUser);
-      expect(state.userCheck).toBe(true);
+      expect(selectUser({ user: state } as RootState)).toEqual(mockUser);
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
     });
   });
 
@@ -192,7 +203,7 @@ describe('userSlice', () => {
         })
       );
 
-      expect(state.user).toEqual(updatedUser);
+      expect(selectUser({ user: state } as RootState)).toEqual(updatedUser);
     });
   });
 
@@ -200,62 +211,67 @@ describe('userSlice', () => {
     it('fulfilled должен обнулить user и установить userCheck = true', () => {
       const initialState = { ...mockState.user };
 
+
       const state = userSlice.reducer(
         initialState,
         logoutUser.fulfilled(undefined, 'request-id', undefined)
       );
 
-      expect(state.user).toBeNull();
-      expect(state.userCheck).toBe(true);
+      expect(selectUser({ user: state } as RootState)).toBeNull();
+      expect(selectIsAuthChecked({ user: state } as RootState)).toBe(true);
     });
   });
 
   describe('селекторы', () => {
     it('userSelect должен вернуть текущего пользователя', () => {
-      const result = userSelectors.userSelect(mockState);
+      const result = selectUser(mockState);
       expect(result).toEqual(mockUser);
     });
 
     it('isAuthCheckedSelect должен вернуть флаг проверки авторизации', () => {
-      const result = userSelectors.isAuthCheckedSelect(mockState);
+      const result = selectIsAuthChecked(mockState);
       expect(result).toBe(true);
     });
 
     it('userIsLoadingSelect должен вернуть true при requestStatus = "loading"', () => {
-      const loadingState: any = {
+      const loadingState: RootState = {
+        ...mockState,
         user: {
           ...mockState.user,
           requestStatus: 'loading'
         }
       };
 
-      const result = userSelectors.userIsLoadingSelect(loadingState);
+      const result = makeUserIsLoading(loadingState);
       expect(result).toBe(true);
     });
 
     it('userIsLoadingSelect должен вернуть false при других статусах', () => {
-      const idleState: any = {
+      const idleState: RootState = {
+        ...mockState,
         user: {
           ...mockState.user,
           requestStatus: 'idle'
         }
       };
-      const succeededState: any = {
+      const succeededState: RootState = {
+        ...mockState,
         user: {
           ...mockState.user,
           requestStatus: 'succeeded'
         }
       };
-      const failedState: any = {
+      const failedState: RootState = {
+        ...mockState,
         user: {
           ...mockState.user,
           requestStatus: 'failed'
         }
       };
 
-      expect(userSelectors.userIsLoadingSelect(idleState)).toBe(false);
-      expect(userSelectors.userIsLoadingSelect(succeededState)).toBe(false);
-      expect(userSelectors.userIsLoadingSelect(failedState)).toBe(false);
+      expect(makeUserIsLoading(idleState)).toBe(false);
+      expect(makeUserIsLoading(succeededState)).toBe(false);
+      expect(makeUserIsLoading(failedState)).toBe(false);
     });
   });
 });
